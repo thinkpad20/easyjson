@@ -1,0 +1,24 @@
+>>> j1 = '{"foo": "bar", "baz": [1,2], "qux": {"bix": "box"}}'
+>>> j1 |> key "foo" >>= letter 0
+Right 'b'
+>>> j1 |> key "bar" >>= index 1
+Left Lookup failed at key "bar".
+>>> j1 |> key "baz" >>= index 1 >>= number
+Right 2
+>>> j1 |> key "baz" >>= letter 1
+Left Letter expected a string, but "baz" mapped to an array.
+>>> j1 |> key "qux" >>= key "bix" >>= index 0
+Left Index expects an array, but "qux.bix" mapped to a string.
+
+-- For traversing
+key :: Name -> Value -> JRead Value
+index :: Int -> Value -> JRead Value
+letter :: Int -> Value -> JRead Char
+
+-- For extracting
+array :: Value -> JRead (Vector Value)
+object :: Value -> JRead (HashMap Name Value)
+number :: Value -> JRead Double
+string :: Value -> JRead Text
+bool :: Value -> JRead Bool
+null :: Value -> JRead ()
